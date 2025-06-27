@@ -2,6 +2,7 @@ import express from "express";
 import dotenvConfig from "./src/config/dotenv.config.js";
 import connectionDBHandler from "./src/db/db.connection.js";
 import authRoutes from "./src/routes/users.routes.js";
+import captionsRoutes from "./src/routes/captions.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
   res.send("hello world");
 });
 app.use("/users", authRoutes);
+app.use("/captions", captionsRoutes);
 
 connectionDBHandler()
   .then(() => {
