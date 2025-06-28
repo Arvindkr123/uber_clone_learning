@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import envConfig from "../config/dotenv.config.js";
 import UserModel from '../models/users.models.js';
 import blackListTokenModels from '../models/blackListToken.models.js';
+import CaptionModel from '../models/captan.models.js';
 
 export const authUser = async (req, res, next) => {
     try {
@@ -34,3 +35,29 @@ export const authUser = async (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized access: Invalid or expired token" });
     }
 };
+
+export const authCaption = async (req, res, next) => {
+    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized access: No token provided" });
+    }
+
+    // Check if token is blacklisted
+    const blacklisted = await blackListTokenModels.findOne({ token });
+    if (blacklisted) {
+        return res.status(401).json({ message: "Unauthorized access: Token blacklisted" });
+    }
+
+    // Verify JWT token
+    const decoded = jwt.verify(token, envConfig.JWT_SECRET);
+
+    // Retrieve user from DB
+    const caption = await CaptionModel.findById(decoded._id);
+    if (!caption) {
+        return res.status(401).json({ message: "Unauthorized access: caption not found" });
+    }
+
+    req.caption = caption;
+    next(); // Proceed to next middleware 
+}

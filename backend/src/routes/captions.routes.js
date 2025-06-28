@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { authUser } from "../middlewares/auth.middleware.js";
+import { authCaption, authUser } from "../middlewares/auth.middleware.js";
 import captionsControllers from "../controllers/captions.controllers.js";
 
 const router = Router();
@@ -34,5 +34,25 @@ router.post("/register", [
     .isIn(["car", "motorcyle", "auto"])
     .withMessage("invalid"),
 ], captionsControllers.registerCaptionnController);
+
+router.post("/login", [
+  body("email")
+    .isEmail()
+    .withMessage("invalid email"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be valid"),
+], captionsControllers.loginCaption);
+router.post("/login", [
+  body("email")
+    .isEmail()
+    .withMessage("invalid email"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be valid"),
+], captionsControllers.loginCaption);
+
+router.get('/profile', authCaption, captionsControllers.getCaptionProfile)
+router.get('/logout', authCaption, captionsControllers.logoutCaption)
 
 export default router;
