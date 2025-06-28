@@ -8,7 +8,7 @@ const captionSchema = new mongoose.Schema({
         firstname: {
             type: String,
             required: true,
-            minlength: [3, 'fistname must be at least 3 characters long']
+            minlength: [3, 'firstname must be at least 3 characters long']
         },
         lastname: {
             type: String,
@@ -42,17 +42,17 @@ const captionSchema = new mongoose.Schema({
         color: {
             type: String,
             required: true,
-            minlength: [3, 'Color plate must be 3 characters long']
+            minlength: [3, 'Color must be at least 3 characters long']
         },
         plate: {
             type: String,
             required: true,
-            minlength: [3, 'plate must be 3 characters long']
+            minlength: [3, 'Plate must be at least 3 characters long']
         },
         capacity: {
             type: Number,
             required: true,
-            min: [1, 'capacity must be at least 1']
+            min: [1, 'Capacity must be at least 1']
         },
         vehicleType: {
             type: String,
@@ -71,22 +71,26 @@ const captionSchema = new mongoose.Schema({
 
 }, {
     timestamps: true
-})
+});
 
+// Generate JWT
 captionSchema.methods.generateAuthToken = function () {
     const token = jwt.sign({ _id: this._id }, dotenvConfig.JWT_SECRET, {
         expiresIn: '24h'
-    })
+    });
     return token;
-}
+};
 
-captionSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.hash(password, this.password)
-}
-captionSchema.statics.hashPassword = async function () {
-    return await bcrypt.hash(password, 10)
-}
+// Compare passwords
+captionSchema.methods.comparePassword = async function (candidatePassword) {
+    return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Hash password
+captionSchema.statics.hashPassword = async function (password) {
+    return await bcrypt.hash(password, 10);
+};
 
 const CaptionModel = mongoose.model('caption_schema', captionSchema);
 
-export default CaptionModel
+export default CaptionModel;
