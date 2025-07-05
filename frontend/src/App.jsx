@@ -44,14 +44,7 @@ const App = () => {
             </CaptainProtectWrapper>
           }
         ></Route>
-        <Route
-          path="/caption/logout"
-          element={
-            <CaptainProtectWrapper>
-              <CaptionLogout />
-            </CaptainProtectWrapper>
-          }
-        ></Route>
+       <Route path="/captions/logout" element={<CaptionLogout />} />
       </Routes>
     </div>
   );
